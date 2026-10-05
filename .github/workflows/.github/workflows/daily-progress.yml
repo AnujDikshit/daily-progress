@@ -1,0 +1,63 @@
+name: Daily Developer Progress
+
+on:
+  schedule:
+    - cron: "30 18 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  daily-progress:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate daily progress
+        run: |
+          DATE=$(date -u +"%Y-%m-%d")
+
+          mkdir -p progress
+
+          cat > "progress/$DATE.md" << EOF
+          # Daily Developer Progress — $DATE
+
+          ## Focus Areas
+
+          - Python
+          - SQL
+          - Data Analytics
+          - Machine Learning
+          - Projects
+
+          ## Daily Checklist
+
+          - [ ] Python practice
+          - [ ] SQL practice
+          - [ ] Data analysis
+          - [ ] ML practice
+          - [ ] Project development
+          - [ ] GitHub contribution
+
+          ## Notes
+
+          Daily development progress recorded automatically.
+
+          ## Next Step
+
+          Continue improving technical skills and projects.
+          EOF
+
+      - name: Commit progress
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add progress/
+
+          git commit -m "docs: daily developer progress" || exit 0
+
+          git push
